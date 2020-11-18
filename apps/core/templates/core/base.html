@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <!-- Meta -->
+        <meta charset="utf-8">
+
+        <!-- Title -->
+        <title>{% block title %}{% endblock %}Minutos</title>
+
+        <!-- CSS files -->
+        <link rel="stylesheet" type="text/css" href="https://cdn.delivr.net/npm/bulma@0.9.1/css/bulma.min.css">
+    </head>
+
+    <body>
+        <!-- Navbar -->
+        <div id="navbar-app">
+            <nav class="navbar">
+                <div class="navbar-brand">
+                    <a href="/" class="navbar-item"><strong>Minutos</strong></a>
+                </div>
+
+                <div class="navbar-menu">
+                    <div class="navbar-end">
+                        <a href="{% url 'plans' %}" class="navbar-item">Plans</a>
+
+                        <div class="navbar-item">
+                            <div class="buttons">
+                                <a href="#" class="button is-success"><strong>Sign up</strong></a>
+                                <a href="#" class="button">Log in</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </div>
+        <!-- End Navbar -->
+
+        <!-- Main -->
+        <section class="section">
+            {% block content %}
+            {% endblock %}
+        </section>
+        <!-- End Main -->
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="columns is-multiline">
+                <div class="column is-4">
+                    <h2 class="subtitle">Minutos</h2>
+                </div>
+
+                <div class="column is-offset-6 is-2">
+                    <ul>
+                        <li><a href="#">Contact</a></li>
+                        <li><a href="{% url 'privacy' %}">Privacy policy</a></li>
+                        <li><a href="{% url 'terms' %}">Terms of service</a></li>
+                    </ul>
+                </div>
+
+                <div class="column is-12 has-text-centered">
+                    <p>Copyright (c) 2020</p>
+                </div>
+            </div>
+        </footer>
+        <!-- End Footer -->
+    </body>
+</html>
