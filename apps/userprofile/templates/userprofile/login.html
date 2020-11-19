@@ -1,0 +1,54 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Log in | {% endblock %}
+
+{% block content %}
+    <section class="hero is-medium is-light is-bold">
+        <div class="hero-body">
+            <div class="container">
+                <h1 class="title">Log in</h1>
+                <h2 class="subtitle">Log in to your account and start tracking time</h2>
+            </div>
+        </div>
+    </section>  
+
+    <div class="columns" id="signup-app">
+        <div class="column is-6 is-offset-3">
+            <form method="post" action="." class="mt-6">
+                {% csrf_token %}
+
+                {% if form.errors %}
+                    <div class="notification is-danger">
+                        {{ form.non_field_errors }}
+
+                        {% for field in form %}
+                            {% if field.errors %}{{ field.label }}: {{ field.errors|striptags }}{% endif %}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <div class="field">
+                    <label>E-mail</label>
+
+                    <div class="control">
+                        <input type="email" name="username" id="id_username" class="input">
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label>Password</label>
+
+                    <div class="control">
+                        <input type="password" name="password" id="id_password" class="input">
+                    </div>
+                </div>
+
+                <div class="field">
+                    <div class="control">
+                        <button class="button is-success">Log in</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

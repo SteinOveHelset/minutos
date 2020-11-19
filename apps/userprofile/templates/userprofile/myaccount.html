@@ -1,0 +1,30 @@
+{% extends 'core/base.html' %}
+
+{% block title %}My account | {% endblock %}
+
+{% block content %}
+    <nav class="breadcrumb" aria-label="breadcrumbs">
+        <ul>
+            <li><a href="#">Dashboard</a></li>
+            <li class="is-active"><a href="{% url 'myaccount' %}" aria-current="page">My account</a></li>
+        </ul>
+    </nav>
+
+    <div class="columns">
+        <div class="column is-6">
+            <div class="media mb-4">
+                <div class="media-left">
+
+                </div>
+
+                <div class="media-content">
+                    <p class="title is-3">{% firstof user.get_full_name user.username %}</p>
+                    <p class="subtitle is-6">{{ user.email }}</p>
+                </div>
+            </div>
+
+            <a href="{% url 'edit_profile' %}" class="button is-info">Edit profile</a>
+            <a href="{% url 'logout' %}" class="button is-danger">Log out</a>
+        </div>
+    </div>
+{% endblock %}

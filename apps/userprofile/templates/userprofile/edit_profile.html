@@ -1,0 +1,53 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Edit profile | {% endblock %}
+
+{% block content %}
+    <nav class="breadcrumb" aria-label="breadcrumbs">
+        <ul>
+            <li><a href="#">Dashboard</a></li>
+            <li><a href="{% url 'myaccount' %}">My account</a></li>
+            <li class="is-active"><a href="{% url 'edit_profile' %}" aria-current="page">Edit profile</a></li>
+        </ul>
+    </nav>
+
+    <div class="columns">
+        <div class="column is-4">
+            <h1 class="title">Edit profile</h1>
+
+            <form method="post" action="." enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div class="field">
+                    <label>First name</label>
+
+                    <div class="control">
+                        <input type="text" name="first_name" id="first_name" class="input"{% if request.user.first_name %} value="{{ request.user.first_name }}"{% endif %}>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label>Last name</label>
+
+                    <div class="control">
+                        <input type="text" name="last_name" id="last_name" class="input"{% if request.user.last_name %} value="{{ request.user.last_name }}"{% endif %}>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label>E-mail</label>
+
+                    <div class="control">
+                        <input type="text" name="email" id="email" class="input"{% if request.user.email %} value="{{ request.user.email }}"{% endif %}>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <div class="control">
+                        <button class="button is-success">Save changes</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
