@@ -1,0 +1,136 @@
+{% extends 'core/base.html' %}
+
+{% block title %}{{ project.title }} | {% endblock %}
+
+{% block content %}
+    <div id="project-app">
+        <nav class="breadcrumb" aria-label="breadcrumbs">
+            <ul>
+                <li><a href="#">Dashboard</a></li>
+                <li><a href="{% url 'project:projects' %}">Projects</a></li>
+                <li class="is-active"><a href="{% url 'project:project' project.id %}" aria-current="page">{{ project.title }}</a></li>
+            </ul>
+        </nav>
+
+        <div class="columns">
+            <div class="column">
+                <h1 class="title">{{ project.title }}</h1>
+
+                <div class="buttons">
+                    <a @click="showAddTaskModal = !showAddTaskModal" class="button is-success">Add task</a>
+                    <a href="{% url 'project:edit_project' project.id %}" class="button is-warning">Edit project</a>
+                </div>
+            </div>
+        </div>
+
+        {% if not tasks_todo and not tasks_done %}
+            <div class="columns">
+                <div class="column is-3">
+                    <div class="notification">
+                        <p>No tasks yet...</p>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+
+        <div class="columns is-multiline">
+            {% if tasks_todo %}
+                <div class="column is-12">
+                    <h2 class="is-size-4">Todo</h2>
+                </div>
+
+                {% for task in tasks_todo %}
+                    <div class="columns is-4">
+                        <div class="notification">
+                            <h3 class="is-size-5">{{ task.title }}</h3>
+
+                            <hr>
+
+                            <a href="{% url 'project:task' project.id task.id %}" class="button is-success">Details</a>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            {% if tasks_done %}
+                <div class="column is-12">
+                    <h2 class="is-size-4">Done</h2>
+                </div>
+
+                {% for task in tasks_done %}
+                    <div class="columns is-4">
+                        <div class="notification">
+                            <h3 class="is-size-5">{{ task.title }}</h3>
+
+                            <hr>
+
+                            <a href="{% url 'project:task' project.id task.id %}" class="button is-success">Details</a>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+
+        <div class="modal" :class="{'is-active': showAddTaskModal }">
+            <div class="modal-background"></div>
+
+            <form method="post" action="." @submit="validateForm">
+                {% csrf_token %}
+
+                <div class="modal-card">
+                    <div class="modal-card-head">
+                        <p class="modal-card-title">Add task</p>
+                    </div>
+
+                    <div class="modal-card-body">
+                        <div class="field">
+                            <label>Title</label>
+                            <div class="control">
+                                <input type="text" name="title" id="id_title" v-model="title" class="input">
+                            </div>
+                        </div>
+
+                        <div class="notification is-danger" v-if="showError">
+                            The title field is missing!
+                        </div>
+                    </div>
+
+                    <footer class="modal-card-foot">
+                        <button class="button is-success">Submit</button>
+                        <button class="button" @click="showAddTaskModal = !showAddTaskModal">Cancel</button>
+                    </footer>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        const ProjectApp = {
+            data() {
+                return {
+                    showAddTaskModal: false,
+                    title: '',
+                    showError: false
+                }
+            },
+            delimiters: ['[[', ']]'],
+            methods: {
+                validateForm(e) {
+                    if (this.title) {
+                        return true
+                    }
+
+                    this.showError = true
+
+                    e.preventDefault()
+
+                    return false
+                }
+            }
+        }
+
+        Vue.createApp(ProjectApp).mount('#project-app')
+    </script>
+{% endblock %}

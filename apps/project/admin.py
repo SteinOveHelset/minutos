@@ -7,10 +7,11 @@ from django.contrib import admin
 #
 # Import models
 
-from .models import Userprofile
+from .models import Project, Task
 
 
 #
 # Register
 
-admin.site.register(Userprofile)
+admin.site.register(Project)
+admin.site.register(Task)

@@ -1,0 +1,44 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Edit project | {% endblock %}
+
+{% block content %}
+    <div id="project-app">
+        <nav class="breadcrumb" aria-label="breadcrumbs">
+            <ul>
+                <li><a href="#">Dashboard</a></li>
+                <li><a href="{% url 'project:projects' %}">Projects</a></li>
+                <li><a href="{% url 'project:project' project.id %}">{{ project.title }}</a></li>
+                <li class="is-active"><a href="{% url 'project:edit_project' project.id %}" aria-current="page">Edit project</a></li>
+            </ul>
+        </nav>
+
+        <div class="columns">
+            <div class="column">
+                <h1 class="title">Edit project</h1>
+            </div>
+        </div>
+
+        <div class="columns">
+            <div class="column is-4">
+                <form method="post" action=".">
+                    {% csrf_token %}
+
+                    <div class="field">
+                        <label>Title</label>
+
+                        <div class="control">
+                            <input type="text" name="title" id="id_title" class="input" value="{{ project.title }}">
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <div class="control">
+                            <button class="button is-success">Save changes</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

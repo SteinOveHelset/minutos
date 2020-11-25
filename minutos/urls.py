@@ -26,6 +26,12 @@ urlpatterns = [
     path('plans/', plans, name='plans'),
     path('admin/', admin.site.urls),
 
+
+    #
+    # Dashboard
+
+    path('projects/', include('apps.project.urls')),
+
     #
     # Auth
 
