@@ -33,6 +33,19 @@
                     </div>
 
                     <div class="field">
+                        <label>Status</label>
+
+                        <div class="control">
+                            <div class="select">
+                                <select name="status" id="id_status">
+                                    <option value="todo"{% if task.status == 'todo' %} selected{% endif %}>Todo</option>
+                                    <option value="done"{% if task.status == 'done' %} selected{% endif %}>Done</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="field">
                         <div class="control">
                             <button class="button is-success">Save changes</button>
                         </div>

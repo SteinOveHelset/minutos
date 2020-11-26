@@ -23,8 +23,13 @@
                 </div>
             </div>
 
-            <a href="{% url 'edit_profile' %}" class="button is-info">Edit profile</a>
-            <a href="{% url 'logout' %}" class="button is-danger">Log out</a>
+            <a href="{% url 'edit_profile' %}" class="button is-info">
+                <span class="icon"><i class="far fa-edit"></i></span>
+                <span>Edit profile</span></a>
+            <a href="{% url 'logout' %}" class="button is-danger">
+                <span class="icon"><i class="fas fa-sign-out-alt"></i></span>
+                <span>Log out</span>
+            </a>
         </div>
     </div>
 

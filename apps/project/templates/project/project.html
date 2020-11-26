@@ -40,9 +40,11 @@
                 </div>
 
                 {% for task in tasks_todo %}
-                    <div class="columns is-4">
+                    <div class="column is-4">
                         <div class="notification">
                             <h3 class="is-size-5">{{ task.title }}</h3>
+
+                            <p>Registered time: {{ task.registered_time }}</p>
 
                             <hr>
 
@@ -58,9 +60,11 @@
                 </div>
 
                 {% for task in tasks_done %}
-                    <div class="columns is-4">
+                    <div class="column is-4">
                         <div class="notification">
                             <h3 class="is-size-5">{{ task.title }}</h3>
+
+                            <p>Registered time: {{ task.registered_time }}</p>
 
                             <hr>
 
