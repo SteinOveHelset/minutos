@@ -35,6 +35,16 @@
 
     <hr>
 
+    {% if invitations %}
+    <div class="notification is-info">
+        <h2 class="subtitle">You have pending invitations</h2>
+
+        {% for invitation in invitations %}
+            <a href="{% url 'accept_invitation' %}">{{ invitation.team.title }}</a>
+        {% endfor %}
+    </div>
+    {% endif %}
+
     <div class="columns">
         <div class="column is-12">
             <h2 class="subtitle">Teams</h2>

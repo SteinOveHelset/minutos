@@ -1,0 +1,78 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Invite member | {% endblock %}
+
+{% block content %}
+    <nav class="breadcrumb" aria-label="breadcrumbs">
+        <ul>
+            <li><a href="#">Dashboard</a></li>
+            <li><a href="{% url 'myaccount' %}">My account</a></li>
+            <li><a href="{% url 'team:team' team.id %}">{{ team.title }}</a></li>
+            <li class="is-active"><a href="{% url 'team:invite' %}" aria-current="page">Invite member</a></li>
+        </ul>
+    </nav>
+
+    <div class="columns is-multiline" id="invite-app">
+        <div class="column is-4">
+            <h1 class="title">Invite member</h1>
+
+            <div class="notification is-danger" v-if="errors.length">
+                <p v-for="error in errors">[[ error ]]</p>
+            </div>
+
+            <form method="post" action="." @submit="validateForm" novalite>
+                {% csrf_token %}
+
+                <div class="field">
+                    <label>E-mail</label>
+
+                    <div class="control">
+                        <input type="email" name="email" id="id_email" v-model="email" class="input">
+                    </div>
+                </div>
+
+                <div class="field">
+                    <div class="control">
+                        <button class="button is-success">Send invitation</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const InviteApp = {
+        data() {
+            return {
+                email: '',
+                errors: []
+            }
+        },
+        delimiters: ['[[', ']]'],
+        methods: {
+            validateForm(e) {
+                if (this.validateEmail(this.email)) {
+                    return true
+                }
+
+                this.errors = ['The e-mail is not valid']
+
+                e.preventDefault()
+
+                return false
+            },
+            validateEmail(email) {
+                if (/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(email)) {
+                    return true
+                }
+
+                return false
+            }
+        }
+    }
+
+    Vue.createApp(InviteApp).mount('#invite-app')
+</script>
+{% endblock %}
