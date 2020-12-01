@@ -43,6 +43,18 @@
                 </div>
 
                 <div class="field">
+                    <label>Avatar</label>
+
+                    <figure class="image is-64x64">
+                        <img src="{{ request.user.userprofile.get_avatar }}">
+                    </figure>
+
+                    <div class="control mt-2">
+                        <input type="file" name="avatar" id="id_avatar" class="input">
+                    </div>
+                </div>
+
+                <div class="field">
                     <div class="control">
                         <button class="button is-success">Save changes</button>
                     </div>

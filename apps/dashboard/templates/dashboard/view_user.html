@@ -2,13 +2,35 @@
 
 {% load dashboardextras %}
 
-{% block title %}Dashboard | {% endblock %}
+{% block title %}{% firstof user.get_full_name user.username %} | {% endblock %}
 
 {% block content %}
+    <nav class="breadcrumb" aria-label="breadcrumbs">
+        <ul>
+            <li><a href="#">Dashboard</a></li>
+            <li class="is-active"><a href="{% url 'view_user' user.id %}" aria-current="page">{% firstof user.get_full_name user.username %}</a></li>
+        </ul>
+    </nav>
+
     <div class="columns is-multiline">
+        <div class="column is-12">
+            <div class="media">
+                <div class="media-left">
+                    <figure class="image is-64x64">
+                        <img src="{{ user.userprofile.get_avatar }}">
+                    </figure>
+                </div>
+
+                <div class="media-content">
+                    <p class="title is-3">{% firstof user.get_full_name user.username %}</p>
+                    <p class="subtitle is-6">{{ user.email }}</p>
+                </div>
+            </div>
+        </div>
+
         <div class="column is-6">
             <div class="notification">
-                <h2 class="subtitle">Your time {% if num_days is 0 %}today{% else %}{{ date_user|date:"Y-m-d" }}{% endif %}</h2>
+                <h2 class="subtitle">{% firstof user.get_full_name user.username %}'s time {% if num_days is 0 %}today{% else %}{{ date_user|date:"Y-m-d" }}{% endif %}</h2>
             
                 {% if date_entries %}
                     <table class="table is-fullwidth" style="text-align: left;">
@@ -50,7 +72,7 @@
 
         <div class="column is-6">
             <div class="notification">
-                <h2 class="subtitle">Your time {% if user_num_months is 0 %}this month{% else %}{{ user_month|date:"Y-m" }}{% endif %}</h2>
+                <h2 class="subtitle">{% firstof user.get_full_name user.username %}'s time {% if user_num_months is 0 %}this month{% else %}{{ user_month|date:"Y-m" }}{% endif %}</h2>
             
                 {% if time_for_user_and_month %}
                     <table class="table is-fullwidth" style="text-align: left;">
@@ -89,67 +111,5 @@
                 {% endif %}
             </div>
         </div>
-
-        {% if request.user == team.created_by %}
-            <div class="column is-6">
-                <div class="notification">
-                    <h2 class="subtitle">Your team {% if team_num_months is 0 %}this month{% else %}{{ team_month|date:"Y-m" }}{% endif %}</h2>
-                
-                    {% if time_for_team_and_month > 0 %}
-                        <table class="table is-fullwidth" style="text-align: left;">
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Time</th>
-                                </tr>
-                            </thead>
-
-                            <tbody>
-                                {% for member in members %}
-                                    <tr>
-                                        <td><a href="{% url 'view_user' member.id %}">{% firstof member.get_full_name member.username %}</a></td>
-                                        <td>{{ member.time_for_user_and_team_and_month|format_minutes }}</td>
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    {% else %}
-                        <p>No registred time for your team this month...</p>
-                    {% endif %}
-
-                    <a href="?team_num_months={{ team_num_months|add:'1' }}" class="mt-4">Previous</a>
-                    {% if team_num_months > 0 %}
-                    <a href="?team_num_months={{ team_num_months|add:'-1' }}" class="mt-4">Next</a>
-                    {% endif %}
-                </div>
-            </div>
-        {% endif %}
-    </div>
-
-    <div class="columns is-multiline">
-        <div class="column is-12">
-            <h2 class="subtitle">Newest projects</h2>
-        </div>
-
-        {% for project in projects %}
-            <div class="column is-3">
-                <div class="notification">
-                    <h2 class="is-size-5">{{ project.title }}</h2>
-
-                    <p class="is-size-7">Registered time: {{ project.registered_time|format_minutes }}</p>
-                    <p class="is-size-7">Tasks: {{ project.num_tasks_todo }}</p>
-
-                    <hr>
-
-                    <a href="{% url 'project:project' project.id %}" class="button is-info">Details</a>
-                </div>
-            </div>
-        {% empty %}
-            <div class="column is-3">
-                <div class="notification">
-                    <p>No projects yet...</p>
-                </div>
-            </div>
-        {% endfor %}
     </div>
 {% endblock %}
