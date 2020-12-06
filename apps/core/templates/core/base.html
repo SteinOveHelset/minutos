@@ -27,6 +27,24 @@
                         {% else %}
                             <a href="{% url 'dashboard' %}" class="navbar-item">Dashboard</a>
                             <a href="{% url 'project:projects' %}" class="navbar-item">Projects</a>
+
+                            <div class="navbar-item" v-if="!trackingTime">
+                                <div class="buttons">
+                                    <a class="button is-success" @click="startTimer()">
+                                        <span class="icon"><i class="fas fa-stopwatch"></i></span>
+                                        <span>Start</span>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="navbar-item" v-else>
+                                <div class="buttons">
+                                    <a class="button is-warning" @click="stopTimer()">
+                                        <span class="icon"><i class="fas fa-stopwatch"></i></span>
+                                        <span>[[ readableSeconds ]] (stop)</span>
+                                    </a>
+                                </div>
+                            </div>
                         {% endif %}
 
                         <div class="navbar-item">
@@ -47,6 +65,26 @@
                     </div>
                 </div>
             </nav>
+
+            <div class="modal" :class="{'is-active': showTrackingModal}">
+                <div class="modal-background"></div>
+
+                <div class="modal-card">
+                    <div class="modal-card-head">
+                        <p class="modal-card-title">Tracked time</p>
+                    </div>
+
+                    <div class="modal-card-body">
+                        <p>You have tracked [[ readableSeconds ]]</p>
+                    </div>
+
+                    <footer class="modal-card-foot">
+                        <button class="button is-primary" @click="addToTask()">Add to task</button>
+                        <button class="button is-success" @click="addLater()">Add later</button>
+                        <button class="button is-danger" @click="discardTimer()">Discard</button>
+                    </footer>
+                </div>
+            </div>
         </div>
         <!-- End Navbar -->
 
@@ -88,6 +126,107 @@
         <!-- Scripts -->
         <script src="https://use.fontawesome.com/releases/v5.14.0/js/all.js"></script>
         <script src="https://unpkg.com/vue@next"></script>
+        <script>
+            var NavbarApp = {
+                data() {
+                    return {
+                        seconds: {{ active_entry_seconds }},
+                        trackingTime: false,
+                        showTrackingModal: false,
+                        timer: null,
+                        entryID: 0,
+                        startTime: '{{ start_time }}'
+                    }
+                },
+                delimiters: ['[[', ']]'],
+                methods: {
+                    startTimer() {
+                        fetch('/dashboard/projects/api/start_timer/', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': '{{ csrf_token }}'
+                            }
+                        })
+                        .then((response) => {
+                            return response.json()
+                        })
+                        .then((result) => {
+                            this.startTime = new Date()
+                            this.trackingTime = true
+
+                            this.timer = setInterval(() => {
+                                this.seconds = (new Date() - this.startTime) / 1000
+                            }, 1000)
+                        })
+                    },
+                    stopTimer() {
+                        fetch('/dashboard/projects/api/stop_timer/', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': '{{ csrf_token }}'
+                            }
+                        })
+                        .then((response) => {
+                            return response.json()
+                        })
+                        .then((result) => {
+                            this.entryID = result.entryID
+                            this.showTrackingModal = true
+                            this.trackingTime = false
+
+                            window.clearTimeout(this.timer)
+                        })
+                    },
+                    discardTimer() {
+                        fetch('/dashboard/projects/api/discard_timer/', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': '{{ csrf_token }}'
+                            }
+                        })
+                        .then((response) => {
+                            this.seconds = 0
+                            this.showTrackingModal = false
+                        })
+                    },
+                    addLater() {
+                        this.seconds = 0
+                        this.showTrackingModal = false
+                    },
+                    addToTask() {
+                        console.log('addToTask')
+                        window.location.href = '/dashboard/projects/track_entry/' + this.entryID + '/'
+                    }
+                },
+                mounted() {
+                    if (this.seconds !== 0) {
+                        this.trackingTime = true
+                        this.timer = setInterval(() => {
+                            this.seconds = (new Date() - new Date(this.startTime)) / 1000
+                        }, 1000)
+                    }
+                },
+                computed: {
+                    readableSeconds() {
+                        const d = Number(this.seconds);
+                        const h = Math.floor(d / 3600);
+                        const m = Math.floor(d % 3600 / 60);
+                        const s = Math.floor(d % 3600 % 60);
+
+                        const hDisplay = h > 0 ? h + (h == 1 ? "h, " : "h, ") : "";
+                        const mDisplay = m > 0 ? m + (m == 1 ? "m, " : "m, ") : "";
+                        const sDisplay = s >= 0 ? s + (s == 1 ? "s" : "s") : "";
+
+                        return hDisplay + mDisplay + sDisplay; 
+                    }
+                }
+            }
+
+            Vue.createApp(NavbarApp).mount('#navbar-app')
+        </script>
         {% block scripts %}
         {% endblock %}
         <!-- End Scripts -->

@@ -65,8 +65,8 @@ class Task(models.Model):
 
 class Entry(models.Model):
     team = models.ForeignKey(Team, related_name='entries', on_delete=models.CASCADE)
-    project = models.ForeignKey(Project, related_name='entries', on_delete=models.CASCADE)
-    task = models.ForeignKey(Task, related_name='entries', on_delete=models.CASCADE)
+    project = models.ForeignKey(Project, related_name='entries', on_delete=models.CASCADE, blank=True, null=True)
+    task = models.ForeignKey(Task, related_name='entries', on_delete=models.CASCADE, blank=True, null=True)
     minutes = models.IntegerField(default=0)
     is_tracked = models.BooleanField(default=False)
     created_by = models.ForeignKey(User, related_name='entries', on_delete=models.CASCADE)
@@ -79,4 +79,4 @@ class Entry(models.Model):
         if self.task:
             return '%s - %s' % (self.task.title, self.created_at)
         
-        return '%' % self.created_at
+        return '%s' % self.created_at

@@ -90,6 +90,42 @@
             </div>
         </div>
 
+        <div class="column is-6">
+            <div class="notification">
+                <h2 class="subtitle">Your untracked entries</h2>
+
+                <table class="table is-fullwidth" style="text-align: left;">
+                    <thead>
+                        <tr>
+                            <th>Started</th>
+                            <th>Time</th>
+                            <th>Status</th>
+                            <th>Add to task</th>
+                            <th>Discard</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for entry in untracked_entries %}
+                            <tr>
+                                <td>{{ entry.created_at }}</td>
+                                <td>
+                                    {% if entry.minutes == 0 %}
+                                        {{ entry.minutes_since|format_minutes }}
+                                    {% else %}
+                                        {{ entry.minutes|format_minutes }}
+                                    {% endif %}
+                                </td>
+                                <td>{% if entry.minutes == 0 %}In progress{% else %}Untracked{% endif %}</td>
+                                <td><a href="{% url 'project:track_entry' entry.id %}">Add to task</a></td>
+                                <td><a href="{% url 'project:delete_untracked_entry' entry.id %}">Delete</a></td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
         {% if request.user == team.created_by %}
             <div class="column is-6">
                 <div class="notification">
