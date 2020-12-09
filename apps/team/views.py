@@ -103,3 +103,13 @@ def invite(request):
                 messages.info(request, 'The users has already been invited')
 
     return render(request, 'team/invite.html', {'team': team})
+
+@login_required
+def plans(request):
+    team = get_object_or_404(Team, pk=request.user.userprofile.active_team_id, status=Team.ACTIVE)
+
+    context = {
+        'team': team, 
+    }
+
+    return render(request, 'team/plans.html', context)

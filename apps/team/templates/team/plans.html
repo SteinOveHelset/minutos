@@ -1,0 +1,140 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Plans | {% endblock %}
+
+{% block content %}
+    <nav class="breadcrumb" aria-label="breadcrumbs">
+        <ul>
+            <li><a href="#">Dashboard</a></li>
+            <li><a href="{% url 'myaccount' %}">My account</a></li>
+            <li><a href="{% url 'team:team' team.id %}">{{ team.title }}</a></li>
+            <li class="is-active"><a href="{% url 'team:plans' %}" aria-current="page"></a></li>
+        </ul>
+    </nav>
+
+    <div class="columns mt-6" id="plans-app">
+        <div class="column is-3">
+            <div class="card">
+                <div class="card-content">
+                    <div class="media">
+                        <div class="media-content">
+                            <p class="title is-4">Free</p>
+                            <p class="subtitle is-6">$0</p>
+                        </div>
+                    </div>
+
+                    <div class="content">
+                        <ul>
+                            <li>3 projects</li>
+                            <li>1 member</li>
+                            <li>10 tasks per project</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="column is-3">
+            <div class="card">
+                <div class="card-content">
+                    <div class="media">
+                        <div class="media-content">
+                            <p class="title is-4">Basic</p>
+                            <p class="subtitle is-6">$5</p>
+                        </div>
+                    </div>
+
+                    <div class="content">
+                        <ul>
+                            <li>10 projects</li>
+                            <li>15 member</li>
+                            <li>30 tasks per project</li>
+                        </ul>
+
+                        <hr>
+
+                        {% if team.plan.title == 'Basic' %}
+                            <a href="?cancel_plan=true" class="button is-danger">Cancel</a>
+                        {% else %}
+                            <a @click="subscribe('basic')" class="button is-primary">Start</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="column is-3">
+            <div class="card">
+                <div class="card-content">
+                    <div class="media">
+                        <div class="media-content">
+                            <p class="title is-4">Pro</p>
+                            <p class="subtitle is-6">$10</p>
+                        </div>
+                    </div>
+
+                    <div class="content">
+                        <ul>
+                            <li>25 projects</li>
+                            <li>50 member</li>
+                            <li>100 tasks per project</li>
+                        </ul>
+
+                        <hr>
+
+                        {% if team.plan.title == 'Pro' %}
+                            <a href="?cancel_plan=true" class="button is-danger">Cancel</a>
+                        {% else %}
+                            <a @click="subscribe('pro')" class="button is-primary">Start</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="column is-3">
+            <div class="card">
+                <div class="card-content">
+                    <div class="media">
+                        <div class="media-content">
+                            <p class="title is-4">Need more?</p>
+                            <p class="subtitle is-6">$?</p>
+                        </div>
+                    </div>
+
+                    <div class="content">
+                        <ul>
+                            <li>Need more projects?</li>
+                            <li>Need more members?</li>
+                            <li>Need more tasks?</li>
+                        </ul>
+
+                        <hr>
+
+                        <a href="#" class="button is-primary">Contact us</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="https://js.stripe.com/v3/"></script>
+    <script>
+        const PlansApp = {
+            data() {
+                return {
+                }
+            },
+            delimiters: ['[[', ']]'],
+            methods: {
+                subscribe(plan) {
+                    console.log('Subscribe:', plan);
+                }
+            }
+        }
+
+        Vue.createApp(PlansApp).mount('#plans-app')
+    </script>
+{% endblock %}

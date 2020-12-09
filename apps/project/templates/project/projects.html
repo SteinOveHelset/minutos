@@ -17,7 +17,19 @@
             <div class="column is-4">
                 <h1 class="title">Projects</h1>
 
-                <a @click="showAddProjectModal = !showAddProjectModal" class="button is-success">Add project</a>
+                {% if team.plan.max_projects_per_team > team.projects.count %}
+                    <a @click="showAddProjectModal = !showAddProjectModal" class="button is-success">Add project</a>
+                {% else %}
+                    <div class="notification is-warning">
+                        This team has reached the limit of projects.<br>
+
+                        {% if team.created_by == request.user %}
+                            <a href="{% url 'team:plans' %}">Upgrade plan</a>
+                        {% else %}
+                            Contact your team owner...
+                        {% endif %}
+                    </div>
+                {% endif %}
             </div>
         </div>
 

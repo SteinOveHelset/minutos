@@ -20,23 +20,35 @@
                 <p v-for="error in errors">[[ error ]]</p>
             </div>
 
-            <form method="post" action="." @submit="validateForm" novalite>
-                {% csrf_token %}
+            {% if team.plan.max_members_per_team > team.members.count %}
+                <form method="post" action="." @submit="validateForm" novalite>
+                    {% csrf_token %}
 
-                <div class="field">
-                    <label>E-mail</label>
+                    <div class="field">
+                        <label>E-mail</label>
 
-                    <div class="control">
-                        <input type="email" name="email" id="id_email" v-model="email" class="input">
+                        <div class="control">
+                            <input type="email" name="email" id="id_email" v-model="email" class="input">
+                        </div>
                     </div>
-                </div>
 
-                <div class="field">
-                    <div class="control">
-                        <button class="button is-success">Send invitation</button>
+                    <div class="field">
+                        <div class="control">
+                            <button class="button is-success">Send invitation</button>
+                        </div>
                     </div>
+                </form>
+            {% else %}
+                <div class="notification is-warning">
+                    This team has reached the limit of members.<br>
+
+                    {% if team.created_by == request.user %}
+                        <a href="{% url 'team:plans' %}">Upgrade plan</a>
+                    {% else %}
+                        Contact your team owner...
+                    {% endif %}
                 </div>
-            </form>
+            {% endif %}
         </div>
     </div>
 {% endblock %}
