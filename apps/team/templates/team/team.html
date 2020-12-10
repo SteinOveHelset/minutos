@@ -15,6 +15,12 @@
         <div class="column is-4">
             <h1 class="title">{{ team.title }}</h1>
 
+            <p><strong>Current plan: </strong>{{ team.plan.title }}</p>
+
+            {% if team.plan.title != 'Free' %}
+                <p><strong>Plan end date: </strong>{{ team.plan_end_date|date:"Y-m-d" }}{% if team.plan_status == 'active' %} (auto renewing){% endif %}</p>
+            {% endif %}
+
             {% if request.user == team.created_by %}
                 <a href="{% url 'team:invite' %}" class="button is-primary">Invite users</a>
                 <a href="{% url 'team:plans' %}" class="button is-success">Change plan</a>

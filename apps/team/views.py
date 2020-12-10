@@ -2,11 +2,15 @@
 # Import Python
 
 import random
+import stripe
+
+from datetime import datetime
 
 
 #
 # Import Django
 
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
@@ -15,7 +19,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 #
 # Import models
 
-from .models import Team, Invitation
+from .models import Team, Invitation, Plan
 
 
 #
@@ -107,9 +111,44 @@ def invite(request):
 @login_required
 def plans(request):
     team = get_object_or_404(Team, pk=request.user.userprofile.active_team_id, status=Team.ACTIVE)
+    error = ''
+
+    if request.GET.get('cancel_plan', ''):
+        try:
+            plan_default = Plan.objects.get(is_default=True)
+
+            team.plan = plan_default
+            team.plan_status = Team.PLAN_CANCELED
+            team.save()
+
+            stripe.api_key = settings.STRIPE_SECRET_KEY
+            stripe.Subscription.delete(team.stripe_subscription_id)
+        except Exception:
+            error = 'Something went wrong with the cancelation. Please try again!'
 
     context = {
-        'team': team, 
+        'team': team,
+        'error': error,
+        'stripe_pub_key': settings.STRIPE_PUBLISHABLE_KEY
     }
 
     return render(request, 'team/plans.html', context)
+
+@login_required
+def plans_thankyou(request):
+    error = ''
+
+    try:
+        team = get_object_or_404(Team, pk=request.user.userprofile.active_team_id, status=Team.ACTIVE)
+        stripe.api_key = settings.STRIPE_SECRET_KEY
+        subscription = stripe.Subscription.retrieve(team.stripe_subscription_id)
+        product = stripe.Product.retrieve(subscription.plan.product)
+
+        team.plan_status = Team.PLAN_ACTIVE
+        team.plan_end_date = datetime.fromtimestamp(subscription.current_period_end)
+        team.plan = Plan.objects.get(title=product.name)
+        team.save()
+    except Exception:
+        error = 'There something wrong. Please try again!'
+
+    return render(request, 'team/plans_thankyou.html', {'error': error})

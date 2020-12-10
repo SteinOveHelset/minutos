@@ -131,6 +131,34 @@
             methods: {
                 subscribe(plan) {
                     console.log('Subscribe:', plan);
+
+                    const stripe = Stripe('{{ stripe_pub_key }}');
+
+                    fetch('/dashboard/myaccount/teams/api/create_checkout_session/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        },
+                        body: JSON.stringify({
+                            'plan': plan
+                        })
+                    })
+                    .then(function(response) {
+                        return response.json()
+                    })
+                    .then(function(session) {
+                        console.log(session)
+                        return stripe.redirectToCheckout({ sessionId: session.sessionId })
+                    })
+                    .then(function(result) {
+                        if (result.error) {
+                            console.log('Error:', result.error.message)
+                        }
+                    })
+                    .catch(function(error) {
+                        console.log('Error:', error);
+                    });
                 }
             }
         }
